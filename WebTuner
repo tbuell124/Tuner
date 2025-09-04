@@ -342,7 +342,8 @@ function amdfFast(x, sr){
 
   // remove mean + lightweight Hann (in-place scratch to reduce allocs)
   if (!amdfFast._w) amdfFast._w = new Float32Array(N);
-  const w = amdfFast._w;
+  if (!amdfFast._v || amdfFast._v.length < N) amdfFast._v = new Float32Array(N);
+  const w = amdfFast._w, v = amdfFast._v;
   let mean=0; for (let i=0;i<N;i++) mean+=x[i]; mean/=N;
   for (let i=0;i<N;i++){
     const win = 0.5*(1-Math.cos(2*Math.PI*i/(N-1)));
@@ -354,13 +355,14 @@ function amdfFast(x, sr){
     let s=0; const L = N-lag;
     for (let i=0;i<L;i++){ const d=w[i]-w[i+lag]; s+= (d<0? -d : d); }
     const val = s / L;
+    v[lag] = val;
     if (val<best){ best=val; bestLag=lag; }
   }
   if (bestLag<2) return null;
+  if (bestLag===minLag || bestLag===maxLag) return sr / bestLag;
 
-  // refine with simple parabola around bestLag using AMDF values
-  const f=(lag)=>{ let s=0, L=N-lag; for(let i=0;i<L;i++){ const d=w[i]-w[i+lag]; s+= (d<0? -d : d); } return s/L; };
-  const y1=f(bestLag-1), y2=f(bestLag), y3=f(bestLag+1);
+  // refine with simple parabola around bestLag using cached AMDF values
+  const y1=v[bestLag-1], y2=v[bestLag], y3=v[bestLag+1];
   const a=(y1+y3-2*y2)/2, b=(y3-y1)/2;
   const refined = a ? bestLag - b/(2*a) : bestLag;
   return sr / refined;
