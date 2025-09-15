@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "TunePlay", targets: ["TunePlay"])
     ],
     dependencies: [
-        .package(url: "https://github.com/alladinian/Tuna.git", from: "1.0.0")
+        .package(url: "https://github.com/alladinian/Tuna.git", from: "0.9.1")
     ],
     targets: [
         .target(
