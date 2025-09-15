@@ -2,22 +2,26 @@
 import PackageDescription
 
 let package = Package(
-    name: "PedalTuner",
+    name: "TunePlay",
     platforms: [
         .iOS(.v16)
     ],
     products: [
-        .library(name: "PedalTuner", targets: ["PedalTuner"])
+        .library(name: "TunePlay", targets: ["TunePlay"])
+    ],
+    dependencies: [
+        .package(url: "https://github.com/alladinian/Tuna.git", from: "1.0.0")
     ],
     targets: [
         .target(
-            name: "PedalTuner",
-            path: "Sources/PedalTuner"
+            name: "TunePlay",
+            dependencies: ["Tuna"],
+            path: "Sources/TunePlay"
         ),
         .testTarget(
-            name: "PedalTunerTests",
-            dependencies: ["PedalTuner"],
-            path: "Tests/PedalTunerTests"
+            name: "TunePlayTests",
+            dependencies: ["TunePlay"],
+            path: "Tests/TunePlayTests"
         )
     ]
 )

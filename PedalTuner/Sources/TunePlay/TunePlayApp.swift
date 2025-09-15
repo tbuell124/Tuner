@@ -2,7 +2,7 @@
 import SwiftUI
 
 @main
-struct PedalTunerApp: App {
+struct TunePlayApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
