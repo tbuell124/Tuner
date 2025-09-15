@@ -5,15 +5,18 @@ struct ContentView: View {
     @StateObject private var tuner = AudioTuner()
 
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack {
-                Spacer()
-                TunerView(note: tuner.note, cents: tuner.cents)
-                Spacer()
-            }
+        GameTunerView(
+            note: tuner.note,
+            cents: tuner.cents,
+            confidence: tuner.confidence,
+            isStable: tuner.isStable,
+            detectedString: tuner.detectedString
+        )
+        .onAppear { 
+            tuner.start() 
         }
-        .onAppear { tuner.start() }
+        .preferredColorScheme(.dark)
+        .statusBarHidden()
     }
 }
 #endif
