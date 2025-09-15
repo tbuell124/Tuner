@@ -4,36 +4,28 @@ import Tuna
 import Accelerate
 
 class YINDetector: PitchDetectionAlgorithm {
-    private var pitchEngine: PitchEngine?
-    private var lastResult: PitchResult?
-    
-    init() {
-        self.pitchEngine = PitchEngine(bufferSize: 2048, estimationStrategy: .yin) { [weak self] pitch in
-            if let frequency = pitch.frequency, frequency > 0 {
-                self?.lastResult = PitchResult(
-                    frequency: frequency,
-                    confidence: 0.8,
-                    algorithm: "YIN"
-                )
-            }
-        }
-    }
+    private let estimator = YINEstimator()
     
     func detectPitch(from buffer: AVAudioPCMBuffer) -> PitchResult? {
         guard let channelData = buffer.floatChannelData?.pointee else { return nil }
         let frameLength = Int(buffer.frameLength)
+        let sampleRate = Float(buffer.format.sampleRate)
         
         let samples = Array(UnsafeBufferPointer(start: channelData, count: frameLength))
+        let tunaBuffer = Buffer(elements: samples)
         
-        let transform = Transform(strategy: .yin)
-        let pitch = transform.pitch(for: samples)
-        
-        if let frequency = pitch.frequency, frequency > 0 {
-            return PitchResult(
-                frequency: frequency,
-                confidence: 0.8,
-                algorithm: "YIN"
-            )
+        do {
+            let frequency = try estimator.estimateFrequency(sampleRate: sampleRate, buffer: tunaBuffer)
+            
+            if frequency > 0 && frequency < 20000 {
+                return PitchResult(
+                    frequency: Double(frequency),
+                    confidence: 0.8,
+                    algorithm: "YIN"
+                )
+            }
+        } catch {
+            return nil
         }
         
         return nil
@@ -41,36 +33,28 @@ class YINDetector: PitchDetectionAlgorithm {
 }
 
 class HPSDetector: PitchDetectionAlgorithm {
-    private var pitchEngine: PitchEngine?
-    private var lastResult: PitchResult?
-    
-    init() {
-        self.pitchEngine = PitchEngine(bufferSize: 2048, estimationStrategy: .hps) { [weak self] pitch in
-            if let frequency = pitch.frequency, frequency > 0 {
-                self?.lastResult = PitchResult(
-                    frequency: frequency,
-                    confidence: 0.8,
-                    algorithm: "HPS"
-                )
-            }
-        }
-    }
+    private let estimator = HPSEstimator()
     
     func detectPitch(from buffer: AVAudioPCMBuffer) -> PitchResult? {
         guard let channelData = buffer.floatChannelData?.pointee else { return nil }
         let frameLength = Int(buffer.frameLength)
+        let sampleRate = Float(buffer.format.sampleRate)
         
         let samples = Array(UnsafeBufferPointer(start: channelData, count: frameLength))
+        let tunaBuffer = Buffer(elements: samples)
         
-        let transform = Transform(strategy: .hps)
-        let pitch = transform.pitch(for: samples)
-        
-        if let frequency = pitch.frequency, frequency > 0 {
-            return PitchResult(
-                frequency: frequency,
-                confidence: 0.8,
-                algorithm: "HPS"
-            )
+        do {
+            let frequency = try estimator.estimateFrequency(sampleRate: sampleRate, buffer: tunaBuffer)
+            
+            if frequency > 0 && frequency < 20000 {
+                return PitchResult(
+                    frequency: Double(frequency),
+                    confidence: 0.8,
+                    algorithm: "HPS"
+                )
+            }
+        } catch {
+            return nil
         }
         
         return nil
@@ -78,36 +62,28 @@ class HPSDetector: PitchDetectionAlgorithm {
 }
 
 class QuadraticDetector: PitchDetectionAlgorithm {
-    private var pitchEngine: PitchEngine?
-    private var lastResult: PitchResult?
-    
-    init() {
-        self.pitchEngine = PitchEngine(bufferSize: 2048, estimationStrategy: .quadradic) { [weak self] pitch in
-            if let frequency = pitch.frequency, frequency > 0 {
-                self?.lastResult = PitchResult(
-                    frequency: frequency,
-                    confidence: 0.8,
-                    algorithm: "Quadratic"
-                )
-            }
-        }
-    }
+    private let estimator = QuadradicEstimator()
     
     func detectPitch(from buffer: AVAudioPCMBuffer) -> PitchResult? {
         guard let channelData = buffer.floatChannelData?.pointee else { return nil }
         let frameLength = Int(buffer.frameLength)
+        let sampleRate = Float(buffer.format.sampleRate)
         
         let samples = Array(UnsafeBufferPointer(start: channelData, count: frameLength))
+        let tunaBuffer = Buffer(elements: samples)
         
-        let transform = Transform(strategy: .quadradic)
-        let pitch = transform.pitch(for: samples)
-        
-        if let frequency = pitch.frequency, frequency > 0 {
-            return PitchResult(
-                frequency: frequency,
-                confidence: 0.8,
-                algorithm: "Quadratic"
-            )
+        do {
+            let frequency = try estimator.estimateFrequency(sampleRate: sampleRate, buffer: tunaBuffer)
+            
+            if frequency > 0 && frequency < 20000 {
+                return PitchResult(
+                    frequency: Double(frequency),
+                    confidence: 0.8,
+                    algorithm: "Quadratic"
+                )
+            }
+        } catch {
+            return nil
         }
         
         return nil
@@ -115,36 +91,28 @@ class QuadraticDetector: PitchDetectionAlgorithm {
 }
 
 class QuinnDetector: PitchDetectionAlgorithm {
-    private var pitchEngine: PitchEngine?
-    private var lastResult: PitchResult?
-    
-    init() {
-        self.pitchEngine = PitchEngine(bufferSize: 2048, estimationStrategy: .quinnsFirst) { [weak self] pitch in
-            if let frequency = pitch.frequency, frequency > 0 {
-                self?.lastResult = PitchResult(
-                    frequency: frequency,
-                    confidence: 0.8,
-                    algorithm: "Quinn"
-                )
-            }
-        }
-    }
+    private let estimator = QuinnsFirstEstimator()
     
     func detectPitch(from buffer: AVAudioPCMBuffer) -> PitchResult? {
         guard let channelData = buffer.floatChannelData?.pointee else { return nil }
         let frameLength = Int(buffer.frameLength)
+        let sampleRate = Float(buffer.format.sampleRate)
         
         let samples = Array(UnsafeBufferPointer(start: channelData, count: frameLength))
+        let tunaBuffer = Buffer(elements: samples)
         
-        let transform = Transform(strategy: .quinnsFirst)
-        let pitch = transform.pitch(for: samples)
-        
-        if let frequency = pitch.frequency, frequency > 0 {
-            return PitchResult(
-                frequency: frequency,
-                confidence: 0.8,
-                algorithm: "Quinn"
-            )
+        do {
+            let frequency = try estimator.estimateFrequency(sampleRate: sampleRate, buffer: tunaBuffer)
+            
+            if frequency > 0 && frequency < 20000 {
+                return PitchResult(
+                    frequency: Double(frequency),
+                    confidence: 0.8,
+                    algorithm: "Quinn"
+                )
+            }
+        } catch {
+            return nil
         }
         
         return nil
