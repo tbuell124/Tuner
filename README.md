@@ -12,7 +12,7 @@ TunePlay is a fast, dead-accurate, zero-interaction chromatic guitar tuner for i
 
 ### Advanced Pitch Detection
 - Multiple switchable algorithms: YIN, HPS, Quadratic Interpolation, Quinn's Estimators
-- Powered by Tuna library for robust frequency estimation
+- Native Swift implementations using AVFoundation and Accelerate frameworks
 - Confidence scoring and stability tracking with hysteresis
 - Guitar string detection for E2-E4 range
 
@@ -116,19 +116,12 @@ runner.exportResultsToCSV(results, filename: "benchmark_results.csv")
 
 ## Dependencies
 
-- [Tuna](https://github.com/alladinian/Tuna) - Modern Swift pitch detection library
 - AVFoundation - Audio processing
 - Accelerate - DSP operations
 - SwiftUI - User interface
 - Core Haptics - Tactile feedback
 
 ## Architecture Decisions
-
-### Why Tuna over Beethoven?
-- Modern Swift 5 implementation
-- Cleaner API design
-- Based on proven Beethoven algorithms
-- Better maintainability
 
 ### Why Hybrid Noise Suppression?
 - Measurement mode provides maximum accuracy
@@ -154,7 +147,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-- Tuna library for advanced pitch detection algorithms
 - Apple's AVAudioEngine for real-time audio processing
+- Apple's Accelerate framework for DSP operations
 - Core Haptics for tactile feedback
 - SwiftUI for modern declarative UI

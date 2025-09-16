@@ -10,12 +10,11 @@ let package = Package(
         .library(name: "TunePlay", targets: ["TunePlay"])
     ],
     dependencies: [
-        .package(url: "https://github.com/alladinian/Tuna.git", from: "1.0.0")
     ],
     targets: [
         .target(
             name: "TunePlay",
-            dependencies: ["Tuna"],
+            dependencies: [],
             path: "Sources/TunePlay"
         ),
         .testTarget(
