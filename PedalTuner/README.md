@@ -1,11 +1,14 @@
-# PedalTuner
+# TunePlay
 
-A SwiftUI based tuner interface inspired by a pedal-style canvas tuner. The interface mimics the pedal's circular display and provides live pitch detection using `AVAudioEngine`.
+A sophisticated iOS guitar tuner app with advanced pitch detection algorithms, haptic feedback, and game-like visual interface.
 
 ## Features
-- Circular gradient ring similar to the Canvas tuner.
-- Needle style indicator showing pitch deviation in cents.
-- Displays detected note name.
+- Five advanced pitch detection algorithms (YIN, HPS, Quadratic, Quinn's Method, Current)
+- Game-like radial gauge with animated needle and particle effects
+- Haptic feedback for enhanced user experience
+- Real-time cents display with guitar string detection
+- Professional dark mode interface optimized for stage use
+- Google AdMob integration for monetization
 
 ## Building
-This project is packaged as a Swift Package and can be opened in Xcode as an iOS application. Run the app on a device to access the microphone and see the tuner in action.
+This Swift Package provides the core TunePlay functionality. For App Store deployment, use the TunePlayApp Xcode project which integrates this package. Run on a physical device to access the microphone and experience the full tuning functionality.

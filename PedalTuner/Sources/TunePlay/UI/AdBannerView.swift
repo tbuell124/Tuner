@@ -11,7 +11,10 @@ struct AdBannerView: UIViewRepresentable {
     func makeUIView(context: Context) -> GADBannerView {
         let bannerView = GADBannerView(adSize: GADAdSizeBanner)
         bannerView.adUnitID = adUnitID
-        bannerView.rootViewController = UIApplication.shared.windows.first?.rootViewController
+        bannerView.rootViewController = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }?.rootViewController
         bannerView.load(GADRequest())
         return bannerView
     }
