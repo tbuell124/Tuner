@@ -10,6 +10,17 @@ This comprehensive checklist ensures your TunePlay app is ready for App Store su
 - [ ] App Store Connect access configured
 - [ ] Team ID and signing certificates ready
 
+### Create iOS App Project (REQUIRED - Previous TunePlayApp/ was corrupt and removed)
+- [ ] Create new iOS App project in Xcode
+- [ ] Set project name to "TunePlay"
+- [ ] Configure bundle identifier (e.g., `com.yourcompany.tuneplay`)
+- [ ] Set deployment target to iOS 16.0+
+- [ ] Add the PedalTuner Swift Package as a local dependency:
+  - File → Add Package Dependencies → Add Local...
+  - Select the PedalTuner folder from your repository
+- [ ] Import TunePlay module in your main ContentView
+- [ ] Test build on physical device to ensure microphone access works
+
 ### Project Configuration
 - [ ] Bundle identifier chosen and configured (`com.yourcompany.tuneplay`)
 - [ ] App name "TunePlay" reserved in App Store Connect
