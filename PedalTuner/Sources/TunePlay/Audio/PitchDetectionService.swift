@@ -1,6 +1,5 @@
 import Foundation
 import AVFoundation
-import Tuna
 
 protocol PitchDetectionAlgorithm {
     func detectPitch(from buffer: AVAudioPCMBuffer) -> PitchResult?
