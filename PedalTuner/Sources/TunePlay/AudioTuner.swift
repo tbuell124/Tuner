@@ -10,15 +10,19 @@ enum NoiseSuppressionMode {
 }
 
 final class AudioTuner: ObservableObject {
-    private let engine = AVAudioEngine()
-    private let session = AVAudioSession.sharedInstance()
-    private let pitchDetectionService = PitchDetectionService()
-    
     @Published var note: String = "--"
     @Published var cents: Double = 0
     @Published var confidence: Double = 0
     @Published var isStable: Bool = false
     @Published var detectedString: String = ""
+    @Published var currentDetector: DetectorType = .yin
+    @Published var noiseSuppressionEnabled: Bool = false
+    
+    private var audioInput: AudioInput
+    private var preprocessor: AudioPreprocessor
+    private var pitchDetectionService: PitchDetectionService
+    private var pitchStabilizer: PitchStabilizer
+    private var noiseSuppressionEngine: NoiseSuppressionEngine
     
     private var noiseMode: NoiseSuppressionMode = .measurement
     private var stableFrameCount = 0
@@ -38,59 +42,34 @@ final class AudioTuner: ObservableObject {
         (note: "E", octave: 4, frequency: 329.63)
     ]
 
-    func start() {
-        configureSession()
-        setupAudioEngine()
+    init() {
+        self.audioInput = AudioInput()
+        self.preprocessor = AudioPreprocessor(sampleRate: 48000)
+        self.pitchDetectionService = PitchDetectionService()
+        self.pitchStabilizer = PitchStabilizer()
+        self.noiseSuppressionEngine = NoiseSuppressionEngine()
+        
+        setupAudioPipeline()
     }
     
-    func switchDetector(to type: DetectorType) {
-        pitchDetectionService.switchDetector(to: type)
-    }
-    
-    func switchNoiseMode(to mode: NoiseSuppressionMode) {
-        noiseMode = mode
-        engine.stop()
-        configureSession()
-        setupAudioEngine()
-    }
-
-    private func configureSession() {
-        do {
-            switch noiseMode {
-            case .measurement:
-                try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker])
-            case .voiceProcessing:
-                try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.defaultToSpeaker])
-            case .adaptive:
-                try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker])
-            }
-            
-            try session.setPreferredSampleRate(48000)
-            try session.setPreferredIOBufferDuration(0.005)
-            try session.setActive(true)
-        } catch {
-            print("Session error: \(error)")
+    private func setupAudioPipeline() {
+        audioInput.onAudioBuffer = { [weak self] buffer in
+            self?.processAudioBuffer(buffer)
         }
     }
     
-    private func setupAudioEngine() {
-        let input = engine.inputNode
-        let bus = 0
-        let format = input.outputFormat(forBus: bus)
-
-        input.installTap(onBus: bus, bufferSize: 2048, format: format) { [weak self] buffer, _ in
-            self?.process(buffer: buffer)
+    private func processAudioBuffer(_ buffer: AVAudioPCMBuffer) {
+        var samples = preprocessor.process(buffer: buffer)
+        
+        if noiseSuppressionEnabled {
+            samples = noiseSuppressionEngine.process(samples)
         }
-
-        do {
-            try engine.start()
-        } catch {
-            print("Engine start error: \(error)")
-        }
-    }
-
-    private func process(buffer: AVAudioPCMBuffer) {
-        guard let result = pitchDetectionService.detectPitch(from: buffer) else {
+        
+        let processedBuffer = createBuffer(from: samples, format: buffer.format)
+        let pitchResult = pitchDetectionService.detectPitch(from: processedBuffer)
+        let stabilizedResult = pitchStabilizer.stabilize(pitchResult)
+        
+        guard let result = stabilizedResult else {
             decreaseStability()
             return
         }
@@ -136,6 +115,51 @@ final class AudioTuner: ObservableObject {
         }
     }
     
+    private func createBuffer(from samples: [Float], format: AVAudioFormat) -> AVAudioPCMBuffer {
+        guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(samples.count)) else {
+            return AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 0)!
+        }
+        
+        buffer.frameLength = AVAudioFrameCount(samples.count)
+        
+        if let channelData = buffer.floatChannelData {
+            for i in 0..<samples.count {
+                channelData.pointee[i] = samples[i]
+            }
+        }
+        
+        return buffer
+    }
+
+    func start() {
+        do {
+            try audioInput.start()
+        } catch {
+            print("Failed to start audio input: \(error)")
+        }
+    }
+    
+    func switchDetector(to type: DetectorType) {
+        currentDetector = type
+        pitchDetectionService.switchDetector(to: type)
+        pitchStabilizer.reset()
+    }
+    
+    func switchNoiseMode(to mode: NoiseSuppressionMode) {
+        noiseMode = mode
+        noiseSuppressionEnabled = (mode == .voiceProcessing || mode == .adaptive)
+        
+        do {
+            if noiseSuppressionEnabled {
+                try audioInput.switchToVoiceProcessingMode()
+            } else {
+                try audioInput.switchToMeasurementMode()
+            }
+        } catch {
+            print("Failed to switch audio mode: \(error)")
+        }
+    }
+    
     private func decreaseStability() {
         stableFrameCount = max(0, stableFrameCount - 2)
         DispatchQueue.main.async {
@@ -154,6 +178,31 @@ final class AudioTuner: ObservableObject {
         }
         
         return ""
+    }
+    
+    func benchmarkAllDetectors() -> [DetectorType: PitchResult?] {
+        guard let buffer = createSyntheticBuffer(frequency: 440.0, sampleRate: 48000, duration: 0.1) else {
+            return [:]
+        }
+        
+        return pitchDetectionService.benchmarkAllDetectors(with: buffer)
+    }
+    
+    private func createSyntheticBuffer(frequency: Double, sampleRate: Double, duration: Double) -> AVAudioPCMBuffer? {
+        let frameCount = AVAudioFrameCount(sampleRate * duration)
+        let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1)!
+        
+        guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else { return nil }
+        buffer.frameLength = frameCount
+        
+        guard let channelData = buffer.floatChannelData else { return nil }
+        
+        for i in 0..<Int(frameCount) {
+            let sample = sin(2.0 * Double.pi * frequency * Double(i) / sampleRate)
+            channelData.pointee[i] = Float(sample)
+        }
+        
+        return buffer
     }
 }
 #else

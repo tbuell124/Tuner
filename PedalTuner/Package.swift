@@ -10,12 +10,14 @@ let package = Package(
         .library(name: "TunePlay", targets: ["TunePlay"])
     ],
     dependencies: [
-        .package(url: "https://github.com/alladinian/Tuna.git", from: "1.0.0")
+        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "11.0.0")
     ],
     targets: [
         .target(
             name: "TunePlay",
-            dependencies: ["Tuna"],
+            dependencies: [
+                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads")
+            ],
             path: "Sources/TunePlay"
         ),
         .testTarget(
