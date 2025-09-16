@@ -1,37 +1,36 @@
-# TunePlay - Modern Game-Like Guitar Tuner for iOS
+# TunePlay
 
-TunePlay is a fast, dead-accurate, zero-interaction chromatic guitar tuner for iPhone that feels like a tiny game the moment it opens. No buttons, no menus on the main screen—just open and it works.
+TunePlay is a sophisticated iOS guitar tuner application that combines precision with an engaging, game-like interface. Built with SwiftUI and advanced audio processing, it offers multiple pitch detection algorithms, haptic feedback, particle effects, and real-time visual feedback to help guitarists achieve perfect tuning.
 
 ## Features
 
-### Zero-Interaction Design
-- App auto-starts listening and tuning immediately upon launch
-- No taps, buttons, or menus required on the main screen
-- Full-screen radial gauge with smooth needle animation
-- Game-like visual feedback with particle celebrations
+### Core Functionality
+- **Real-time pitch detection** with sub-cent accuracy using advanced algorithms
+- **Five sophisticated detection algorithms**: 
+  - YIN (autocorrelation-based with cumulative mean normalized difference)
+  - HPS (Harmonic Product Spectrum with FFT analysis)
+  - Quadratic Interpolation (parabolic peak refinement)
+  - Quinn's Method (advanced frequency estimation)
+  - Current (optimized autocorrelation)
+- **Guitar string detection** with automatic string identification for standard tuning
+- **Adaptive noise suppression** with multiple processing modes
+- **Pitch stabilization** with hysteresis to reduce jitter and false readings
 
-### Advanced Pitch Detection
-- Multiple switchable algorithms: YIN, HPS, Quadratic Interpolation, Quinn's Estimators
-- Powered by Tuna library for robust frequency estimation
-- Confidence scoring and stability tracking with hysteresis
-- Guitar string detection for E2-E4 range
+### User Interface
+- **Game-like radial gauge** with animated needle and color-coded feedback
+- **Particle effects system** when achieving perfect tuning (±2 cents)
+- **Haptic feedback** with intensity-based responses for tuning states
+- **Professional dark mode** interface optimized for stage use
+- **Accessibility support** with comprehensive VoiceOver labels
+- **Real-time cents display** with ±50 cent range and smoothing
 
-### Noise Suppression
-- Hybrid approach with measurement and voice processing modes
-- Adaptive switching based on environmental conditions
-- Optimized for guitar frequencies with band-pass filtering
-
-### Performance Optimized
-- Target ≤40ms latency on iPhone 12+, ≤60ms on iPhone X/XS
-- ≤15% CPU usage on A15, ≤25% on A12
-- 48kHz audio processing with 5ms buffer duration
-- Real-time safe audio callbacks with no allocations
-
-### Accessibility & Haptics
-- Core Haptics integration for pitch lock feedback
-- Colorblind-safe color palette (red → yellow → green)
-- VoiceOver support with descriptive labels
-- High contrast mode support
+### Technical Features
+- **Dual audio processing modes**: Measurement (high precision) and Voice Processing (noise reduction)
+- **Real-time FFT analysis** using Apple's Accelerate framework
+- **48kHz sample rate** with 2048-sample buffer for optimal latency/accuracy balance
+- **Comprehensive test suite** with mathematical validation and algorithm benchmarking
+- **Google AdMob integration** for monetization
+- **Cross-platform compatibility** (iOS primary with Swift Package, Web secondary)
 
 ## Technical Architecture
 
@@ -54,19 +53,66 @@ Microphone → AVAudioEngine → Noise Processing → Pitch Detection → UI Upd
 - **Voice Processing**: Hardware-accelerated noise reduction
 - **Adaptive**: Switches based on confidence levels
 
+## Project Structure
+
+```
+Tuner/
+├── PedalTuner/           # iOS Swift Package
+│   ├── Sources/
+│   │   └── TunePlay/     # Main source code
+│   │       ├── Audio/    # Audio processing and pitch detection
+│   │       │   ├── AudioInput.swift
+│   │       │   ├── AudioPreprocessor.swift
+│   │       │   ├── NativePitchDetectors.swift
+│   │       │   ├── NoiseSuppressionEngine.swift
+│   │       │   ├── PitchDetectionService.swift
+│   │       │   ├── PitchStabilizer.swift
+│   │       │   └── TunerViewModel.swift
+│   │       ├── UI/       # User interface components
+│   │       │   ├── AdBannerView.swift
+│   │       │   └── GameTunerView.swift
+│   │       ├── AudioTuner.swift      # Main tuner controller
+│   │       ├── ContentView.swift     # Root view with AdMob
+│   │       ├── TunePlayApp.swift     # App entry point
+│   │       └── TunerView.swift       # Simple tuner view
+│   ├── Tests/
+│   │   └── TunePlayTests/    # Comprehensive unit tests
+│   │       ├── AudioTunerTests.swift
+│   │       ├── PitchDetectionTests.swift
+│   │       ├── TuningMathTests.swift
+│   │       └── PedalTunerTests.swift
+│   └── Package.swift        # Package configuration with AdMob
+├── TunePlayApp/             # iOS App Project for App Store
+│   └── TunePlayApp/
+│       ├── TunePlayAppApp.swift
+│       ├── ContentView.swift
+│       └── Info.plist       # AdMob configuration
+├── WebTuner                 # Web-based tuner (single HTML file)
+├── README.md               # This file
+└── ARCHITECTURE.md         # Technical architecture details
+```
+
 ## Requirements
 
 - iOS 16.0+
 - Swift 5.9+
 - Xcode 15.0+
 - Microphone access
+- Apple Developer Account (for App Store submission)
 
-## Installation
+## Installation & Development
 
+### Swift Package Development
 1. Clone the repository
 2. Open `PedalTuner/Package.swift` in Xcode
 3. Build and run on device or simulator
 4. Grant microphone permission when prompted
+
+### iOS App for App Store
+1. Open `TunePlayApp/TunePlayApp.xcodeproj` in Xcode
+2. Configure your development team and bundle identifier
+3. Build and run on device
+4. Follow the Google AdMob setup guide for production deployment
 
 ## Usage
 
@@ -79,67 +125,35 @@ Microphone → AVAudioEngine → Noise Processing → Pitch Detection → UI Upd
 
 ### Unit Tests
 ```bash
+cd PedalTuner
 swift test
 ```
 
-### Benchmark Suite
-```swift
-let runner = BenchmarkRunner()
-let results = runner.runComprehensiveBenchmark()
-runner.exportResultsToCSV(results, filename: "benchmark_results.csv")
-```
-
 ### Test Coverage
-- Pitch detection algorithm switching
+- Pitch detection algorithm switching and accuracy
 - Tuning math calculations (frequency to note conversion)
 - Guitar string frequency validation
-- Cents calculation and smoothing
-- Audio tuner state management
-
-## Performance Metrics
-
-### Accuracy Targets
-- ≤±1 cent in quiet rooms
-- ≤±3 cents with typical room noise (TV at 55-60 dBA)
-
-### Latency Targets
-- ≤40ms median on iPhone 12 and newer
-- ≤60ms on iPhone X/XS
-
-### CPU Usage Targets
-- ≤15% on A15 Bionic
-- ≤25% on A12 Bionic
-
-### Stability Requirements
-- Stable lock for sustained notes ≥250ms
-- Fast reacquisition between plucks
+- Cents calculation and smoothing algorithms
+- Audio tuner state management and stability
+- Mathematical validation of all pitch detection algorithms
 
 ## Dependencies
 
-- [Tuna](https://github.com/alladinian/Tuna) - Modern Swift pitch detection library
-- AVFoundation - Audio processing
-- Accelerate - DSP operations
-- SwiftUI - User interface
-- Core Haptics - Tactile feedback
+- **GoogleMobileAds** - Monetization through banner advertisements
+- **AVFoundation** - Real-time audio processing and microphone access
+- **Accelerate** - High-performance DSP operations and FFT analysis
+- **SwiftUI** - Modern declarative user interface
+- **CoreHaptics** - Tactile feedback for enhanced user experience
 
-## Architecture Decisions
+## Architecture
 
-### Why Tuna over Beethoven?
-- Modern Swift 5 implementation
-- Cleaner API design
-- Based on proven Beethoven algorithms
-- Better maintainability
+The app uses a sophisticated multi-layered architecture:
 
-### Why Hybrid Noise Suppression?
-- Measurement mode provides maximum accuracy
-- Voice processing mode handles noisy environments
-- A/B testing determines optimal approach per use case
-
-### Why SwiftUI over UIKit?
-- Declarative UI matches game-like requirements
-- Built-in animation system
-- Better accessibility support
-- Easier particle system implementation
+1. **Audio Layer**: Real-time microphone input with noise suppression
+2. **Processing Layer**: Five different pitch detection algorithms
+3. **Analysis Layer**: Confidence scoring and pitch stabilization
+4. **UI Layer**: Game-like visual feedback with animations
+5. **Feedback Layer**: Haptic and particle effects for perfect tuning
 
 ## Contributing
 
