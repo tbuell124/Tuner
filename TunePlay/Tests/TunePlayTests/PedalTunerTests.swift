@@ -1,7 +1,7 @@
 import XCTest
-@testable import PedalTuner
+@testable import TunePlay
 
-final class PedalTunerTests: XCTestCase {
+final class TunePlayTests: XCTestCase {
     func testDefaultState() {
         let tuner = AudioTuner()
         XCTAssertEqual(tuner.note, "--")

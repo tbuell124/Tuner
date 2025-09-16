@@ -57,7 +57,7 @@ Microphone → AVAudioEngine → Noise Processing → Pitch Detection → UI Upd
 
 ```
 Tuner/
-├── PedalTuner/           # iOS Swift Package
+├── TunePlay/             # iOS Swift Package
 │   ├── Sources/
 │   │   └── TunePlay/     # Main source code
 │   │       ├── Audio/    # Audio processing and pitch detection
@@ -80,7 +80,7 @@ Tuner/
 │   │       ├── AudioTunerTests.swift
 │   │       ├── PitchDetectionTests.swift
 │   │       ├── TuningMathTests.swift
-│   │       └── PedalTunerTests.swift
+│   │       └── TunePlayTests.swift
 │   └── Package.swift        # Package configuration with AdMob
 ├── TunePlayApp/             # iOS App Project for App Store
 │   └── TunePlayApp/
@@ -104,7 +104,7 @@ Tuner/
 
 ### Swift Package Development
 1. Clone the repository
-2. Open `PedalTuner/Package.swift` in Xcode
+2. Open `TunePlay/Package.swift` in Xcode
 3. Build and run on device or simulator
 4. Grant microphone permission when prompted
 
@@ -125,7 +125,7 @@ Tuner/
 
 ### Unit Tests
 ```bash
-cd PedalTuner
+cd TunePlay
 swift test
 ```
 

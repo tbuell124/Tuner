@@ -119,7 +119,7 @@
 			);
 			mainGroup = 1A2B3C4D5E6F7887;
 			packageReferences = (
-				1A2B3C4D5E6F7898 /* XCLocalSwiftPackageReference "../PedalTuner" */,
+				1A2B3C4D5E6F7898 /* XCLocalSwiftPackageReference "../TunePlay" */,
 			);
 			productRefGroup = 1A2B3C4D5E6F7891 /* Products */;
 			projectDirPath = "";
@@ -368,16 +368,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		1A2B3C4D5E6F7898 /* XCLocalSwiftPackageReference "../PedalTuner" */ = {
+		1A2B3C4D5E6F7898 /* XCLocalSwiftPackageReference "../TunePlay" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../PedalTuner;
+			relativePath = ../TunePlay;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		1A2B3C4D5E6F7899 /* TunePlay */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1A2B3C4D5E6F7898 /* XCLocalSwiftPackageReference "../PedalTuner" */;
+			package = 1A2B3C4D5E6F7898 /* XCLocalSwiftPackageReference "../TunePlay" */;
 			productName = TunePlay;
 		};
 /* End XCSwiftPackageProductDependency section */

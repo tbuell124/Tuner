@@ -58,7 +58,7 @@ This comprehensive guide will walk you through setting up Google AdMob for your 
    ```
    Replace `ca-app-pub-XXXXXXXXXXXXXXXX~ZZZZZZZZZZ` with your actual AdMob App ID from Step 2.
 
-2. **Update Ad Unit ID**: In `PedalTuner/Sources/TunePlay/UI/AdBannerView.swift`, replace the test ad unit ID:
+2. **Update Ad Unit ID**: In `TunePlay/Sources/TunePlay/UI/AdBannerView.swift`, replace the test ad unit ID:
    ```swift
    init(adUnitID: String = "ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY") {
    ```
