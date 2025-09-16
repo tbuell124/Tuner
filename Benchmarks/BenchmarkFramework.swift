@@ -1,3 +1,9 @@
+//  BenchmarkFramework.swift
+//  TunePlay
+//  Copyright © 2025 Tyler Buell. All rights reserved.
+//  Unauthorized copying of this file, via any medium is strictly prohibited.
+//  Proprietary and confidential.
+
 import Foundation
 import AVFoundation
 import Accelerate
@@ -81,7 +87,6 @@ class BenchmarkRunner {
     func runComprehensiveBenchmark() -> [BenchmarkResult] {
         var results: [BenchmarkResult] = []
         
-        print("Starting comprehensive pitch detection benchmark...")
         
         for frequency in testFrequencies {
             for centOffset in centOffsets {
@@ -101,7 +106,6 @@ class BenchmarkRunner {
             }
         }
         
-        print("Benchmark completed with \(results.count) test cases")
         return results
     }
     
@@ -214,7 +218,6 @@ class BenchmarkRunner {
         
         let url = URL(fileURLWithPath: filename)
         try? csvContent.write(to: url, atomically: true, encoding: .utf8)
-        print("Results exported to \(filename)")
     }
     
     func generateSummaryReport(_ results: [BenchmarkResult]) -> String {

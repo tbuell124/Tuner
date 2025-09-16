@@ -1,3 +1,9 @@
+//  AudioTuner.swift
+//  TunePlay
+//  Copyright © 2025 Tyler Buell. All rights reserved.
+//  Unauthorized copying of this file, via any medium is strictly prohibited.
+//  Proprietary and confidential.
+
 #if canImport(AVFoundation)
 import AVFoundation
 import Accelerate
@@ -135,7 +141,6 @@ final class AudioTuner: ObservableObject {
         do {
             try audioInput.start()
         } catch {
-            print("Failed to start audio input: \(error)")
         }
     }
     
@@ -156,7 +161,6 @@ final class AudioTuner: ObservableObject {
                 try audioInput.switchToMeasurementMode()
             }
         } catch {
-            print("Failed to switch audio mode: \(error)")
         }
     }
     
