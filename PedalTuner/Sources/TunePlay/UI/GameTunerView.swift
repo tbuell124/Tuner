@@ -1,9 +1,3 @@
-//  GameTunerView.swift
-//  TunePlay
-//  Copyright © 2025 Tyler Buell. All rights reserved.
-//  Unauthorized copying of this file, via any medium is strictly prohibited.
-//  Proprietary and confidential.
-
 import SwiftUI
 import CoreHaptics
 
@@ -130,6 +124,7 @@ struct GameTunerView: View {
             hapticsEngine = try CHHapticEngine()
             try hapticsEngine?.start()
         } catch {
+            print("Haptics engine error: \(error)")
         }
     }
     
@@ -169,6 +164,7 @@ struct GameTunerView: View {
             let player = try engine.makePlayer(with: pattern)
             try player.start(atTime: 0)
         } catch {
+            print("Haptic playback error: \(error)")
         }
     }
 }

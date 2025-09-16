@@ -87,6 +87,7 @@ Tuner/
 │       ├── TunePlayAppApp.swift
 │       ├── ContentView.swift
 │       └── Info.plist       # AdMob configuration
+├── WebTuner                 # Web-based tuner (single HTML file)
 ├── README.md               # This file
 └── ARCHITECTURE.md         # Technical architecture details
 ```
